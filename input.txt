@@ -1,0 +1,20 @@
+
+// This is a comment
+int main(int u, int v){
+	float y = 2.333;
+	string v = "this_is_bad";
+	chr ch = ":";
+	for(int i = 0;i < 10; i++){
+		if(i > v + 2)
+			return y * (u + 2 - 3 / v);
+		else
+			break;
+	}
+
+	int i = 0;
+	while(i < 1209345){
+		i++;
+	}
+
+	8this i&s an: 9rr0r
+}
