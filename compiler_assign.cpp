@@ -9,7 +9,7 @@ map<string, pair<int, string>> symbol_table;
 
 vector<char> del {' ', '+', '-', '*', '/', ',', ';', '>', '<', '=', '(', ')', '[', ']', '{', '}', '%', '!', '\t'};
 vector<char> op {'+', '-', '*', '/', '>', '<', '=', '%', '!', '?', ':'};
-vector<string> key {"if", "else", "while", "break", "int", "float", "return", "char", "for", "true", "false"};
+vector<string> key {"if", "else", "while", "break", "int", "float", "return", "char", "for", "true", "false", "string", "bool"};
 
 bool isDelimiter(char ch) { 
 	auto it = find(del.begin(), del.end(), ch);

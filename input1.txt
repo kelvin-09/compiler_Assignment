@@ -17,6 +17,10 @@ int fact( int n) {
 /*this is another multiline comment*/int main(void) {
 
 	int x;
+	bool test = true;
+	string doge = "cheems";
+	char henlo = 'x';
+	float temperature = 123.23;
 	x = 1;
 
 	while /*they literally work anywhere*/ (x <= 10) {
