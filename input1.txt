@@ -1,0 +1,34 @@
+/*This is comment
+works
+and
+is
+kewl
+which is multiline*/
+
+int fact( int n) {
+
+//This program is to calculate factorial
+	if ( n <= 1)
+		return 1;
+	else
+		return n*fact(n-1);
+}
+
+/*this is another multiline comment*/int main(void) {
+
+	int x;
+	x = 1;
+
+	while /*they literally work anywhere*/ (x <= 10) {
+		write(x);
+		write(fact(x));
+		writeln();
+		x = x + 1;
+	}
+
+	/*int y;
+	y = x+(2*x);
+	return 0;
+	*/
+return 1;
+}
