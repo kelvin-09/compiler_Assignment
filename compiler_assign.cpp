@@ -87,9 +87,17 @@ string subString(string str, int left, int right) {
 	return s; 
 }
 
-
+bool identifier_token_bool = false;
+int identifier_token_num = 0;
 void printOutput(string subStr, string s){
 	int tn = 0, ln = line_num;
+
+	if(s == "identifier" && identifier_token_bool){
+		tn = identifier_token_num;
+		cout << "Token " << tn << ", string " << subStr << ", line number " << ln << "\n";
+		return;
+	}
+
 	if(symbol_table.find(subStr) == symbol_table.end()){
 		symbol_table[subStr] = make_pair(token_num, s);
 		tn = token_num;
@@ -98,6 +106,12 @@ void printOutput(string subStr, string s){
 	else{
 		tn = symbol_table[subStr].first;
 	}
+
+	if(!identifier_token_bool && symbol_table[subStr].second == "identifier"){
+		identifier_token_bool = true;
+		identifier_token_num = symbol_table[subStr].first;
+	}
+
 	cout << "Token " << tn << ", string " << subStr << ", line number " << ln << "\n";
 }
 
