@@ -19,8 +19,9 @@ int fact( int n) {
 	bool test = true;
 	string doge = "cheems";
 	char henlo = 'x';
-	float temperature = 123.23;
-	x = 1;
+	float temperaturepressurevolumegausslawreal = 123.23;
+	x = -123456789012;
+	float hehe = 123456678.123345678
 
 	while /*they literally work anywhere*/ (x <= 10) {
 		write(x);
@@ -29,9 +30,5 @@ int fact( int n) {
 		x = x + 1;
 	}
 
-	/*int y;
-	y = x+(2*x);
-	return 0;
-	*/
 return 1;
 }
