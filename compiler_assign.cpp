@@ -4,11 +4,12 @@ using namespace std;
 
 string line;
 int line_num = 1, token_num = 1;
+bool multilineComment = false;
 map<string, pair<int, string>> symbol_table;
 
 vector<char> del {' ', '+', '-', '*', '/', ',', ';', '>', '<', '=', '(', ')', '[', ']', '{', '}', '%', '!', '\t'};
 vector<char> op {'+', '-', '*', '/', '>', '<', '=', '%', '!', '?', ':'};
-vector<string> key {"if", "else", "while", "break", "int", "float", "return", "char", "for", "true", "false"};
+vector<string> key {"if", "else", "while", "break", "int", "float", "return", "char", "for", "true", "false", "string", "bool"};
 
 bool isDelimiter(char ch) { 
 	auto it = find(del.begin(), del.end(), ch);
@@ -104,11 +105,37 @@ void parse(string str) {
 	int left = 0, right = 0; 
 	int len = str.length(); 
 
+	if(len == 0) return;
+
 	while (right < len && left <= right) { 
 
+		if(multilineComment) {
+			bool foundEnd = false;
+			for(int i=right; i<(len-1); i++) {
+				if(str[i] == '*' && str[i+1] == '/') {
+					right = i+2;
+					left = right;
+					foundEnd = true;
+					multilineComment = false;
+					break;
+				}	
+			}
+			if(foundEnd) continue;
+			else break;
+		}
+
 		if(str[right] == '/'){
-			if((right + 1 < len) && str[right + 1] == '/')
-				break;
+			right++;
+			if(right < len) {
+				if(str[right] == '/')
+					break;
+				if(str[right] == '*') {
+					multilineComment = true;
+					right++;
+					left = right;
+					continue;
+				}			
+			}
 		}
 
 		if(str[left] == '"'){
@@ -123,19 +150,20 @@ void parse(string str) {
 			left = right;
 			continue;
 		}
-		if (isDelimiter(str[right]) == false) {
+
+		if (!isDelimiter(str[right])) {
 			right++; 
 			continue;
 		}
 
-		if (isDelimiter(str[right]) == true && left == right) { 
-			if (isOperator(str[right]) == true) {
+		if (isDelimiter(str[right]) && left == right) { 
+			if (isOperator(str[right])) {
 				string subStr = "";
 				subStr += str[right];
 				printOutput(subStr, "operator");
 			}
 
-			if (isDelimiter(str[right]) == true && str[right] != ' ' && !isOperator(str[right]) && str[right] != '\t') {
+			if (isDelimiter(str[right]) && str[right] != ' ' && !isOperator(str[right]) && str[right] != '\t') {
 				string subStr = "";
 				subStr += str[right];
 				printOutput(subStr, "delimiter");
@@ -173,7 +201,7 @@ void parse(string str) {
 		} 
 	} 
 
-	if(isDelimiter(str[right - 1]) == false){
+	if(right > 0 && (!isDelimiter(str[right - 1]))){
 		string subStr = subString(str, left, right - 1); 
 		if(subStr == "")
 			return;
@@ -189,8 +217,9 @@ void parse(string str) {
 	return; 
 } 
 
-int main(){
-	freopen("input.txt", "r", stdin);
+int main() {
+	//freopen("input.txt", "r", stdin);
+	freopen("input1.txt", "r", stdin);
 	//freopen("output.txt", "w", stdout);
 	while(getline(cin, line)){
 		parse(line);

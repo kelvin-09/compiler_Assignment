@@ -1,5 +1,4 @@
-
-// This is a comment
+//This is comment
 int main(int u, int v){
 	float y = 2.333;
 	string v = "this_is_bad";
