@@ -5,6 +5,8 @@ using namespace std;
 string line;
 int line_num = 1, token_num = 1;
 bool multilineComment = false;
+bool identifier_token_bool = false;
+int identifier_token_num = 0;
 map<string, pair<int, string>> symbol_table;
 
 vector<char> del {' ', '+', '-', '*', '/', ',', ';', '>', '<', '=', '(', ')', '[', ']', '{', '}', '%', '!', '\t'};
@@ -25,8 +27,10 @@ bool isOperator(char ch) {
 bool isKeyword(string str) { 
 	auto it = find(key.begin(), key.end(), str);
 	return !(it == key.end());
-} 
+}
 
+
+//Integer has maximum of 11 digits 
 bool isInteger(string str){
 	int i = 0;
 	if(str[0] == '+' || str[1] == '-')
@@ -39,13 +43,15 @@ bool isInteger(string str){
 	return true;
 }
 
+//Float should contain at least one decimal place, it has maximum 7 digits in decimal place and 11 digits in non decimal places
 bool isFloat(string str){
-	int i = 0;
+	int i = 0, franctional = 0, notFractional = 0;
 	if(str[0] == '+' || str[1] == '-')
 		i = 1;
-
 	int dec = 0;
 	while(i < str.length()){
+		if(dec == 0) notFractional++;
+		else franctional++;
 		if(str[i] == '.')
 			dec++;
 		else if(!isdigit(str[i]))
@@ -54,9 +60,18 @@ bool isFloat(string str){
 	}
 	if(dec != 1)
 		return false;
+	if(franctional > 7) {
+		cout << "Lexical error for the float " << str << " (decimal size exceeded), line number " << line_num << "\n";
+		return false;
+	} 
+	if(notFractional > 11) {
+		cout << "Lexical error for the integer " << str << " (size exceeded), line number " << line_num << "\n";
+		return false;
+	}
 	return true;
 }
 
+//Identifier should start with an alphabet and can contain digits, underscore or alphabets as rest of characters
 bool isIdentifier(string str){
 	int state = 1;
 	int i = 0;
@@ -76,10 +91,9 @@ bool isIdentifier(string str){
 		i++;
 	}
 	return true;
-
 }
 
-
+//Function to return substring of given input string
 string subString(string str, int left, int right) {  
 	string s = "";
 	for (int i = left; i <= right; i++) 
@@ -87,18 +101,20 @@ string subString(string str, int left, int right) {
 	return s; 
 }
 
-bool identifier_token_bool = false;
-int identifier_token_num = 0;
-void printOutput(string subStr, string s){
+void printOutput(string subStr, string s) {
 	int tn = 0, ln = line_num;
 
-	if(s == "identifier" && identifier_token_bool){
+	if(s == "identifier" && identifier_token_bool) {
 		tn = identifier_token_num;
+		if(subStr.size() > 31) {
+			cout << "Lexical error for the identifier " << subStr << " (length > 31), line number " << ln << "\n";
+			return;
+		}
 		cout << "Token " << tn << ", string " << subStr << ", line number " << ln << "\n";
 		return;
 	}
 
-	if(symbol_table.find(subStr) == symbol_table.end()){
+	if(symbol_table.find(subStr) == symbol_table.end()) {
 		symbol_table[subStr] = make_pair(token_num, s);
 		tn = token_num;
 		token_num++;
@@ -107,7 +123,7 @@ void printOutput(string subStr, string s){
 		tn = symbol_table[subStr].first;
 	}
 
-	if(!identifier_token_bool && symbol_table[subStr].second == "identifier"){
+	if(!identifier_token_bool && symbol_table[subStr].second == "identifier") {
 		identifier_token_bool = true;
 		identifier_token_num = symbol_table[subStr].first;
 	}
@@ -138,7 +154,7 @@ void parse(string str) {
 			else break;
 		}
 
-		if(str[right] == '/'){
+		if(str[right] == '/') {
 			right++;
 			if(right < len) {
 				if(str[right] == '/')
@@ -152,7 +168,7 @@ void parse(string str) {
 			}
 		}
 
-		if(str[left] == '"'){
+		if(str[left] == '"') {
 			right++;
 			while(right < len && str[right] != '"')
 				right++;
@@ -185,28 +201,20 @@ void parse(string str) {
 
 			right++; 
 			left = right; 
-		} 
-		else if (isDelimiter(str[right]) && left != right || (right == len && left != right)) { 
+		} else if (isDelimiter(str[right]) && left != right || (right == len && left != right)) { 
 			string subStr = subString(str, left, right - 1); 
 
-			if (isKeyword(subStr)){
+			if (isKeyword(subStr)) {
 				printOutput(subStr, "keyword");
-			}
-
-			else if (isInteger(subStr)) {
-				printOutput(subStr, "integerLiteral");
-	
-			}
-
-			else if (isFloat(subStr)) {
+			} else if (isInteger(subStr)) {
+				if(subStr.size() > 11)
+					cout << "Lexical error for the integer " << subStr << " (size exceeded), line number " << line_num << "\n";
+				else printOutput(subStr, "integerLiteral");
+			} else if (isFloat(subStr)) {
 				printOutput(subStr, "floatLiteral");
-			}
-
-			else if (isIdentifier(subStr) && !isDelimiter(str[right - 1])){
+			} else if (isIdentifier(subStr) && !isDelimiter(str[right - 1])) {
 				printOutput(subStr, "identifier");
-			}
-
-			else if (!isIdentifier(subStr) && !isDelimiter(str[right - 1])){
+			} else if (!isIdentifier(subStr) && !isDelimiter(str[right - 1])) {
 				int ln = line_num;
 				cout << "Lexical error for the string " << subStr << ", line number " << ln << "\n";
 			} 
@@ -215,7 +223,7 @@ void parse(string str) {
 		} 
 	} 
 
-	if(right > 0 && (!isDelimiter(str[right - 1]))){
+	if(right > 0 && (!isDelimiter(str[right - 1]))) {
 		string subStr = subString(str, left, right - 1); 
 		if(subStr == "")
 			return;
