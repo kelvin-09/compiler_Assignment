@@ -219,7 +219,7 @@ void parse(string str) {
 
 int main() {
 	//freopen("input.txt", "r", stdin);
-	freopen("input1.txt", "r", stdin);
+	freopen("input.txt", "r", stdin);
 	//freopen("output.txt", "w", stdout);
 	while(getline(cin, line)){
 		parse(line);

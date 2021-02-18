@@ -6,7 +6,6 @@ kewl
 which is multiline*/
 
 int fact( int n) {
-
 //This program is to calculate factorial
 	if ( n <= 1)
 		return 1;
